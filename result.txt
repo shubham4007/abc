@@ -1,0 +1,49 @@
+bq mk lab
+
+gsutil cp gs://cloud-training/gsp323/lab.csv .
+
+cat lab.csv
+
+gsutil cp gs://cloud-training/gsp323/lab.schema .
+
+cat lab.schema
+
+
+AI Task:
+
+Speech API:
+
+1. create API key 
+2. export API_KEY=<YOUR_API_KEY>
+3. touch request.json
+4. nano request.json
+5. {
+  "config": {
+      "encoding":"FLAC",
+      "languageCode": "en-US"
+  },
+  "audio": {
+      "uri":"gs://cloud-samples-tests/speech/brooklyn.flac"
+  }
+}
+
+6. curl -s -X POST -H "Content-Type: application/json" --data-binary @request.json \
+"https://speech.googleapis.com/v1/speech:recognize?key=${API_KEY}"
+
+7. curl -s -X POST -H "Content-Type: application/json" --data-binary @request.json \
+"https://speech.googleapis.com/v1/speech:recognize?key=${API_KEY}" > result.json
+
+8. gsutil cp result.json gs://YOUR_PROJECT-marking/task4-cnl.result
+
+
+
+Language API:
+
+1. export GOOGLE_CLOUD_PROJECT=$(gcloud config get-value core/project)
+2. gcloud iam service-accounts create my-natlang-sa \
+  --display-name "my natural language service account"
+3. gcloud iam service-accounts keys create ~/key.json \
+  --iam-account my-natlang-sa@${GOOGLE_CLOUD_PROJECT}.iam.gserviceaccount.com
+4. export GOOGLE_APPLICATION_CREDENTIALS="/home/USER/key.json"
+5. gcloud ml language analyze-entities --content="Michelangelo Caravaggio, Italian painter, is known for 'The Calling of Saint Matthew'." > result.json
+6. gsutil cp result.json gs://YOUR_PROJECT-marking/task4-cnl.result
